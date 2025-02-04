@@ -5,7 +5,7 @@ const db = mysql.createPool({
   user: 'root',
   host: 'localhost',
   password: '',
-  database: 'pm',
+  database: 'predictive_maintenance',
 });
 
 module.exports = db; 
