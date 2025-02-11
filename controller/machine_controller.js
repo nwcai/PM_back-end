@@ -104,6 +104,20 @@ const MachineController = {
 
     },
 
+    GetAllNameMachine: (req,res) =>{
+        const query = `
+            SELECT id_machine, machine_name FROM machine WHERE status = 'active'
+        `;
+
+        db.query(query, (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Server error');
+            }
+            res.json(result);
+        });
+    }, 
+
     DeleteMachinesById: (req, res) => {
         if (!req.params) {
             return res.status(400).json({ error: 'Request body is missing' });
