@@ -1,11 +1,9 @@
 const db = require('../config/dbCon');
 
-const MachineController = {
-    GetAllMachines: (req, res) => {
+const SensorController = {
+    GetAllSensor: (req, res) => {
         const query = `
-        SELECT mac.*,s_m.status_name FROM machine mac
-        JOIN status_machine s_m ON s_m.status_id = mac.status_machine
-        WHERE mac.status = 'active'
+        SELECT * FROM sensor WHERE status = 'active'
         `;
 
         db.query(query, (err, result) => {
@@ -16,17 +14,10 @@ const MachineController = {
             res.json(result);
         });
     },
-
-    GetMachinesById: (req, res) => {
-        if (!req.params) {
-            return res.status(400).json({ error: 'Request body is missing' });
-        }
+    GetSensorById: (req, res) => {
         const { id } = req.params
         const query = `
-        SELECT mac.*,s_m.status_name FROM machine mac
-        JOIN status_machine s_m ON s_m.status_id = mac.status_machine
-        WHERE mac.status = 'active' and mac.id = ?
-        limit 1
+        SELECT * FROM sensor WHERE status = 'active' and id = ?
         `;
 
         db.query(query, [id], (err, result) => {
@@ -38,49 +29,48 @@ const MachineController = {
         });
     },
 
-
-
-    CreateMachine: (req, res) => {
+    CreateSensor: (req, res) => {
         if (!req.body) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
 
-        const { id_machine, machine_name, detail, note } = req.body;
+        const { id_sensor, name, detail, note, serial_number, status } = req.body;
 
         // Validate required fields
-        if (!id_machine || !machine_name) {
+        if (!id_sensor || !name || !serial_number) {
             console.error('Missing required fields:', req.body);
             return res.status(400).json({ error: 'Bad request: Missing required fields' });
         }
 
         // SQL query with parameterized placeholders
         const query = `
-        INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by) VALUES (?,?,?,?,'active',?,NOW(),'Admin')
+       INSERT INTO sensor( id_senser, id_machine, name, status, serial_number, create_by, create_date, status_sensor, detail, note) 
+       VALUES (?,?,?,'active',?,'admin',Now(),?,?,?)
         `;
 
         // Execute query with parameters
-        db.query(query, [id_machine, machine_name, detail, note, 1], (err, result) => {
+        db.query(query, [id_sensor, name, serial_number, status_sensor, detail, note], (err, result) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Server error' });
             }
-            res.status(201).json({ message: 'machine added successfully', userId: result.insertId });
+            res.status(201).json({ message: 'sensor added successfully', userId: result.insertId });
         });
     },
 
-    UpdateMachine: (req, res) => {
+    UpdateSensor: (req, res) => {
         if (!req.body) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
 
-        const { id_machine, machine_name, detail, note, status, status_machine, create_date, create_by} = req.body;
+        const { id_sensor, name, detail, note, serial_number, status, create_date, create_by } = req.body;
         if (!req.params) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
         const { id } = req.params
         // SQL query Update
         const queryupdate = `
-        UPDATE machine SET status = ? WHERE id = ?
+        UPDATE sensor SET status = ? WHERE id = ?
         `;
         // Execute query with parameters
         db.query(queryupdate, ['inactive', id], (err, result) => {
@@ -88,29 +78,29 @@ const MachineController = {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Server error' });
             }
-            const queryinsert = `
-                INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by, update_date, update_by) 
-                VALUES (?,?,?,?,'active',?,?,?,NOW(),'Admin')
+            const queryinsert = `INSERT INTO sensor( id_senser, id_machine, name, status, serial_number, create_by, create_date, update_by, update_date, status_sensor, detail, note)
+             VALUES (?,?,?,'active',?,?,?,'admit',Now(),?,?,?)
+                
                 `;
-                db.query(queryinsert, [id_machine, machine_name, detail, note, status_machine, create_date, create_by], (err, result) => {
-                    if (err) {
-                        console.error('Database error:', err);
-                        return res.status(500).json({ error: 'Server error' });
-                    }
-                    res.status(201).json({ message: 'machine added successfully', userId: result.insertId });
-                });
+            db.query(queryinsert, [id_sensor, id_machine, name, serial_number, create_by, create_date, status_sensor, detail, note], (err, result) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({ error: 'Server error' });
+                }
+                res.status(201).json({ message: 'machine added successfully', userId: result.insertId });
+            });
 
         });
 
     },
 
-    DeleteMachinesById: (req, res) => {
+    DeletesensorById: (req, res) => {
         if (!req.params) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
         const { id } = req.params
         const query = `
-        UPDATE machine SET status = 'inactive' , update_date = Now() , update_by = 'Admin'
+        UPDATE sensor SET status = 'inactive' , update_date = Now() , update_by = 'Admin'
         WHERE id = ?
         `;
 
@@ -123,7 +113,6 @@ const MachineController = {
         });
     },
 
-
 }
 
-module.exports = MachineController;
+module.exports = SensorController;
