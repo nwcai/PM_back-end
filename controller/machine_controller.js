@@ -3,9 +3,12 @@ const db = require('../config/dbCon');
 const MachineController = {
     GetAllMachines: (req, res) => {
         const query = `
-        SELECT mac.*,s_m.status_name FROM machine mac
+        SELECT mac.*, s_m.status_name, COUNT(s.serial_number) AS sensor_count
+        FROM machine mac
         JOIN status_machine s_m ON s_m.status_id = mac.status_machine
+        LEFT JOIN sensor s ON mac.id_machine = s.id_machine AND s.status = 'active'
         WHERE mac.status = 'active'
+        GROUP BY mac.id_machine, s_m.status_name;
         `;
 
         db.query(query, (err, result) => {
@@ -45,7 +48,7 @@ const MachineController = {
             return res.status(400).json({ error: 'Request body is missing' });
         }
 
-        const { id_machine, machine_name, detail, note } = req.body;
+        const { id_machine, machine_name, detail, note,life_time} = req.body;
 
         // Validate required fields
         if (!id_machine || !machine_name) {
@@ -55,11 +58,12 @@ const MachineController = {
 
         // SQL query with parameterized placeholders
         const query = `
-        INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by) VALUES (?,?,?,?,'active',?,NOW(),'Admin')
+        INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by, life_time)
+         VALUES (?,?,?,?,'active',?,NOW(),'Admin',?)
         `;
 
         // Execute query with parameters
-        db.query(query, [id_machine, machine_name, detail, note, 1], (err, result) => {
+        db.query(query, [id_machine, machine_name, detail, note, 1, life_time], (err, result) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Server error' });
@@ -89,10 +93,10 @@ const MachineController = {
                 return res.status(500).json({ error: 'Server error' });
             }
             const queryinsert = `
-                INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by, update_date, update_by) 
-                VALUES (?,?,?,?,'active',?,?,?,NOW(),'Admin')
+                INSERT INTO machine(id_machine, machine_name, detail, note, status, status_machine, create_date, create_by, update_date, update_by, life_time) 
+                VALUES (?,?,?,?,'active',?,?,?,NOW(),'Admin',?)
                 `;
-                db.query(queryinsert, [id_machine, machine_name, detail, note, status_machine, create_date, create_by], (err, result) => {
+                db.query(queryinsert, [id_machine, machine_name, detail, note, status_machine, create_date, create_by, life_time], (err, result) => {
                     if (err) {
                         console.error('Database error:', err);
                         return res.status(500).json({ error: 'Server error' });

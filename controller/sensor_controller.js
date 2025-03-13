@@ -2,7 +2,7 @@ const db = require('../config/dbCon');
 
 const SensorController = {
     GetAllSensor: (req, res) => {
-        const  id  = req.params.id_machine
+        const id = req.params.id_machine
         const query = `
         SELECT s.* , ss.status_name
         FROM sensor s
@@ -10,7 +10,7 @@ const SensorController = {
         WHERE s.status = 'active' AND s.id_machine = ? ;
         `;
 
-        db.query(query,[id], (err, result) => {
+        db.query(query, [id], (err, result) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Server error');
@@ -38,22 +38,32 @@ const SensorController = {
             return res.status(400).json({ error: 'Request body is missing' });
         }
 
-        const { name, detail, note, serial_number, id_machine  } = req.body;
+        const { name, detail, note, serial_number, id_machine, status_sensor, warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp, 
+            critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp } = req.body;
 
+        
         // Validate required fields
         if (!name || !serial_number) {
             console.error('Missing required fields:', req.body);
             return res.status(400).json({ error: 'Bad request: Missing required fields' });
         }
+        
 
         // SQL query with parameterized placeholders
         const query = `
-       INSERT INTO sensor( id_machine, name, status, serial_number, create_by, create_date, status_sensor, detail, note) 
-       VALUES (?,?,'active',?,'admin',Now(),?,?,?)
+       INSERT INTO sensor(
+           id_machine, name, status, serial_number, create_by, create_date, status_sensor, detail, note,
+           warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp, 
+           critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp
+       ) 
+       VALUES (?, ?, 'active', ?, 'admin', NOW(), ?, ?, ?,
+               ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         // Execute query with parameters
-        db.query(query, [id_machine, name, serial_number, 1, detail, note], (err, result) => {
+        db.query(query, [ id_machine, name, serial_number, status_sensor || 1, detail, note,
+            warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp,
+            critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp], (err, result) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Server error' });
@@ -67,7 +77,10 @@ const SensorController = {
             return res.status(400).json({ error: 'Request body is missing' });
         }
 
-        const { id_machine, id_sensor, name, detail, note, serial_number, status, create_date, create_by , status_sensor ,update_by } = req.body;
+        const { id_machine, id_sensor, name, detail, note, serial_number, status, create_date, create_by, status_sensor, update_by,
+            warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp,
+                critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp
+         } = req.body;
         if (!req.params) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
@@ -82,11 +95,17 @@ const SensorController = {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Server error' });
             }
-            const queryinsert = `INSERT INTO sensor(  id_machine, name, status, serial_number, create_by, create_date, update_by, update_date, status_sensor, detail, note)
-             VALUES (?,?,'active',?,?,?,'admin',Now(),?,?,?)
+            const queryinsert = ` INSERT INTO sensor(
+                id_machine, name, status, serial_number, create_by, create_date, update_by, update_date, status_sensor, detail, note,
+                warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp, 
+                critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp
+            ) 
+            VALUES (?, ?, 'active', ?, ?, NOW(), ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 
                 `;
-            db.query(queryinsert, [id_machine, name, serial_number, create_by, create_date, status_sensor, detail, note], (err, result) => {
+            db.query(queryinsert, [id_machine, name, serial_number, create_by, update_by, status_sensor, detail, note,
+                warning_vibration_x, warning_vibration_y, warning_vibration_z, warning_temp,
+                critical_vibration_x, critical_vibration_y, critical_vibration_z, critical_temp], (err, result) => {
                 if (err) {
                     console.error('Database error:', err);
                     return res.status(500).json({ error: 'Server error' });
