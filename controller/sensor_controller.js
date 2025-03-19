@@ -136,6 +136,33 @@ const SensorController = {
         });
     },
 
+    //  GetGraphBysensorId: (req, res) => {
+    //     const { id } = req.params
+    //     const query = `
+    //     SELECT s.* , ss.status_name
+    //     FROM sensor_data s
+    //     JOIN status_senser ss ON ss.status_id = s.status_sensor
+    //     WHERE s.status = 'active' AND s.id_machine = ? ;
+    //     `;
+
+    //     db.query(query, [id], (err, result) => {
+    //         if (err) {
+    //             console.error(err);
+    //             return res.status(500).send('Server error');
+    //         }
+    //         res.json(result);
+    //     });
+    // },
+
+
+
+    
+
+
+
 }
+
+
+
 
 module.exports = SensorController;
