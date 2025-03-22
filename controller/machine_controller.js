@@ -3,7 +3,7 @@ const db = require('../config/dbCon');
 const MachineController = {
     GetAllMachines: (req, res) => {
         const query = `
-        SELECT mac.*, s_m.status_name, COUNT(s.serial_number) AS sensor_count
+        SELECT mac.*, s_m.status_name, COUNT(s.id_sensor) AS sensor_count
         FROM machine mac
         JOIN status_machine s_m ON s_m.status_id = mac.status_machine
         LEFT JOIN sensor s ON mac.id_machine = s.id_machine AND s.status = 'active'
