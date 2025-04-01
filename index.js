@@ -8,7 +8,7 @@ const machineRouter = require('./routes/machine_router.js')
 const sensorRouter = require ('./routes/sensor_router.js')
 const app = express();
 const port = 3000;
-
+const cronJobs = require('./cron_jobs'); // เรียกใช้ Cron Job
 // Middleware should be defined BEFORE routes
 app.use(cors());
 app.use(express.json());
