@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 01, 2025 at 03:53 AM
+-- Generation Time: Apr 02, 2025 at 12:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,10 +46,11 @@ CREATE TABLE `event` (
 --
 
 INSERT INTO `event` (`id`, `id_machine`, `id_sensor`, `event_name`, `event_type`, `severity`, `description`, `timestamp`, `repair_date`, `repair_effectiveness`, `repair_detail`) VALUES
-(26, 221, '-', 'Impact', 'manual', 3, 'machine hit by falling debris', '2025-03-17 05:44:02', '2025-03-20 07:35:00', 0.80, 'ซ่อมแซมส่วนที่โดนกระแทก'),
-(27, 221, '-', 'Oil Particle', 'manual', 1, 'found scrap in oil', '2025-04-30 06:49:50', NULL, NULL, NULL),
-(36, 221, 'T0001', 'Test', 'automatic', 7, 'Sensor state changed to critical', '2025-04-21 07:44:00', '2025-04-28 08:06:00', 1.00, 'Try Fix'),
-(37, 221, 'T0002', 'Test02', 'automatic', 5, 'Sensor state changed to critical', '2025-04-25 07:44:00', NULL, NULL, NULL);
+(26, 221, '-', 'Impact', 'manual', 3, 'machine hit by falling debris', '2025-03-17 05:44:02', '2025-03-30 07:35:00', 0.80, 'ซ่อมแซมส่วนที่โดนกระแทก'),
+(46, 12345, '-', 'test', 'manual', 1, 'test', '2025-04-02 13:57:03', '2025-04-09 14:21:00', 0.80, 'test'),
+(47, 2468, '-', 'Over Heat', 'manual', 6, '-', '2025-03-29 15:34:05', NULL, NULL, NULL),
+(48, 35165, '-', 'test', 'manual', 3, '-', '2025-03-20 15:53:38', NULL, NULL, NULL),
+(53, 35165, '-', 'testtest3', 'manual', 6, 'testtest3', '2025-03-25 17:23:59', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -96,7 +97,9 @@ INSERT INTO `machine` (`id`, `id_machine`, `machine_name`, `detail`, `note`, `st
 (32, 54654, 'dgfdsg', 'fdfds', '-', 'inactive', 1, '2025-04-01 02:10:11', 'Admin', '2025-04-01 02:10:23', 'Admin', 61654, NULL, NULL),
 (33, 221, 'Motor_Test', 'test', '-', 'active', 1, '2025-03-12 11:54:57', 'Admin', '2025-04-01 02:26:44', 'Admin', 1000, NULL, NULL),
 (34, 12345, 'Motor_Engine', 'locate at plant 4', '-', 'inactive', 1, '2025-04-01 06:01:35', 'Admin', '0000-00-00 00:00:00', '', 2500, NULL, NULL),
-(35, 12345, 'Motor_Engine', 'locate at plant 4', '-', 'active', 1, '2025-03-31 23:01:35', 'Admin', '2025-04-01 06:20:09', 'Admin', 2500, NULL, NULL);
+(35, 12345, 'Motor_Engine', 'locate at plant 4', '-', 'active', 1, '2025-03-31 23:01:35', 'Admin', '2025-04-01 06:20:09', 'Admin', 2500, NULL, NULL),
+(36, 2468, 'Smelter', 'Smelt metal', '-', 'active', 1, '2025-03-15 15:31:51', 'Admin', '0000-00-00 00:00:00', '', 1000, NULL, NULL),
+(37, 35165, 'test', 'test', '-', 'active', 1, '2025-03-13 15:48:26', 'Admin', '0000-00-00 00:00:00', '', 1000, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -545,13 +548,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `machine`
 --
 ALTER TABLE `machine`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `notification`
