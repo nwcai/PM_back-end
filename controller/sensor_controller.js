@@ -1,4 +1,6 @@
 const db = require('../config/dbCon');
+const {fetchAndSaveSensors} = require('../service/sensor_service');
+const { fetchAndSaveSensorData } = require('../service/sensor_service');
 
 const SensorController = {
     GetAllSensor: (req, res) => {
@@ -175,8 +177,31 @@ const SensorController = {
         });
     },
 
-    
-    
+    FetchAndSaveSensors: async (req, res) => {
+        try {
+            await fetchAndSaveSensors();
+            res.status(200).send('Sensors fetched and saved successfully');
+        } catch (error) {
+            console.error('Error fetching and saving sensors:', error);
+            res.status(500).send('Error fetching and saving sensors');
+        }
+    },
+
+    FetchAndSaveSensorData: async (req, res) => {
+        const { sensorId, start, end } = req.query;
+
+        if (!sensorId || !start || !end) {
+            return res.status(400).send('Missing required parameters: sensorId, start, or end');
+        }
+
+        try {
+            await fetchAndSaveSensorData(sensorId, start, end);
+            res.status(200).send('Sensor data fetched and saved successfully');
+        } catch (error) {
+            console.error('Error fetching and saving sensor data:', error);
+            res.status(500).send('Error fetching and saving sensor data');
+        }
+    }
 }
 
 const CheckAndUpdateSensorState = (id_sensor) => {

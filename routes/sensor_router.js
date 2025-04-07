@@ -10,5 +10,7 @@ router.put('/update/:id', SensorController.UpdateSensor);
 router.get('/delete/:id', SensorController.DeletesensorById);
 router.get('/data/:id_sensor', SensorController.GetAllSensorDataById); // Corrected method name
 router.post('/create_data', SensorController.InsertSensorData); // Corrected method name
+router.get('/fetch-and-save-sensors', SensorController.FetchAndSaveSensors);
+router.get('/fetch-sensor-data', SensorController.FetchAndSaveSensorData);
 
 module.exports = router;

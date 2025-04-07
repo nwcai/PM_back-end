@@ -185,7 +185,7 @@ const MachineController = {
 
         const query = `
             INSERT INTO event (id_machine,id_sensor,event_name, event_type, severity, description, timestamp)
-            VALUES (?,"-",?, ?, ?, ?, NOW())
+            VALUES (?,"-",?, ?, ?, ?, ?)
         `;
         console.log("Received Event Data:", req.body);
         db.query(query, [id_machine, event_name, event_type, severity, description, timestamp], (err, result) => {
