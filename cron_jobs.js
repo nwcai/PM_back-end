@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { fetchAndSaveSensorData, checkRepair, getAllSensorIds } = require('./service/sensor_service'); // เพิ่ม getAllSensorIds
 
 // ตัวแปรสำหรับเก็บช่วงเวลาล่าสุดที่ดึงข้อมูล
-let lastEndTime = new Date('2025-02-20T17:00:00.000Z'); // กำหนดค่าเริ่มต้นของ start
+let lastEndTime = new Date(); // กำหนดค่าเริ่มต้นของ start
 
 // ตั้งค่า Cron Job ให้ทำงานทุก 5 นาที
 cron.schedule('* * * * *', async () => {
