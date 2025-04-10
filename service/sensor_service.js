@@ -117,6 +117,8 @@ const fetchAndSaveSensors = async () => {
 // ตัวนับสำหรับการตรวจสอบ state (ย้ายออกมานอกลูป)
 let globalCriticalCount = 0;
 let globalWarningCount = 0;
+let lastWarningEventTriggered = false; // Track if the last warning event was triggered
+let lastCriticalEventTriggered = false; // Track if the last critical event was triggered
 
 const fetchAndSaveSensorData = async (sensorIds, start, end) => {
     try {
@@ -252,26 +254,31 @@ const fetchAndSaveSensorData = async (sensorIds, start, end) => {
                     globalWarningCount++;
                     console.log(`Critical Count: ${globalCriticalCount}, Warning Count: ${globalWarningCount}`);
                     console.log(`Sensor ID ${sensorId} is in critical state.`);
+
+                    if (globalCriticalCount >= 3 && !lastCriticalEventTriggered) {
+                        console.log(`Updating state to critical for Sensor ID: ${sensorId}`);
+                        await updateSensorState(sensorId, 'critical', sensor.critical_severity, mappedSensorData.create_date);
+                        lastCriticalEventTriggered = true; // Mark that a critical event was triggered
+                    }
                 } else if (isWarning) {
                     globalWarningCount++;
-                    globalCriticalCount = 0; // รีเซ็ต criticalCount
+                    globalCriticalCount = 0; // Reset critical count
                     console.log(`Critical Count: ${globalCriticalCount}, Warning Count: ${globalWarningCount}`);
+
+                    if (globalWarningCount >= 3 && !lastWarningEventTriggered) {
+                        console.log(`Updating state to warning for Sensor ID: ${sensorId}`);
+                        await updateSensorState(sensorId, 'warning', sensor.warning_severity, mappedSensorData.create_date);
+                        lastWarningEventTriggered = true; // Mark that a warning event was triggered
+                    }
                 } else {
-                    // รีเซ็ตค่าก็ต่อเมื่อไม่มีเงื่อนไขใดเป็น true
+                    // Reset counts and event triggers when no conditions are met
                     if (globalCriticalCount > 0 || globalWarningCount > 0) {
                         console.log(`Resetting counts. Critical Count: ${globalCriticalCount}, Warning Count: ${globalWarningCount}`);
                     }
                     globalWarningCount = 0;
                     globalCriticalCount = 0;
-                }
-
-                // เปลี่ยน state ของ sensor หากเกินเงื่อนไข
-                if (globalCriticalCount >= 3 && sensor.state !== 'critical') {
-                    console.log(`Updating state to critical for Sensor ID: ${sensorId}`);
-                    await updateSensorState(sensorId, 'critical', sensor.critical_severity, mappedSensorData.create_date);
-                } else if (globalWarningCount >= 3 && sensor.state === 'good') {
-                    console.log(`Updating state to warning for Sensor ID: ${sensorId}`);
-                    await updateSensorState(sensorId, 'warning', sensor.warning_severity, mappedSensorData.create_date);
+                    lastWarningEventTriggered = false; // Reset warning event trigger
+                    lastCriticalEventTriggered = false; // Reset critical event trigger
                 }
             }
         }

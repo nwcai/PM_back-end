@@ -1,8 +1,8 @@
 const cron = require('node-cron');
 const { fetchAndSaveSensorData, checkRepair, getAllSensorIds } = require('./service/sensor_service'); // เพิ่ม getAllSensorIds
 
-// ตั้งค่า Cron Job ให้ทำงานทุก 5 นาที
-cron.schedule('* * * * *', async () => {
+// ตั้งค่า Cron Job ให้ทำงานทุก 30 นาที
+cron.schedule('*/30 * * * *', async () => {
     console.log('Running Cron Job: Checking repair status and fetching sensor data');
 
     try {
