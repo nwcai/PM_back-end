@@ -4,9 +4,11 @@ const fs = require('fs');
 const csvParser = require('csv-parser');
 const multer = require('multer');
 const UserRouter = require('./routes/user_router.js');
+const machineRouter = require('./routes/machine_router.js')
+const sensorRouter = require ('./routes/sensor_router.js')
 const app = express();
 const port = 3000;
-
+const cronJobs = require('./cron_jobs'); // เรียกใช้ Cron Job
 // Middleware should be defined BEFORE routes
 app.use(cors());
 app.use(express.json());
@@ -14,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Then define routes
 app.use('/api/user', UserRouter);
+app.use('/api/machine', machineRouter);
+app.use('/api/sensor', sensorRouter);
 
 // กำหนดการอัปโหลดไฟล์
 const upload = multer({ dest: 'uploads/' });
